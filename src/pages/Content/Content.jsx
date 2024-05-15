@@ -1,34 +1,64 @@
+import { pipeline } from '@xenova/transformers';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { YoutubeTranscript } from 'youtube-transcript';
 import './content.styles.css';
+import { HfInference } from '@huggingface/inference';
 
 // var transcript = new Map();
 const Content = ({ videoId }) => {
-  const [show, setShow] = useState(false);
-  //   const [Loading, setLoading] = useState(true);
+  const [transcript, setTranscript] = useState([]);
+  const [summary, setSummary] = useState('');
 
-  //   if (show) {
-  //     console.log('use effec start');
-  //     const set = new Set();
-  //     YoutubeTranscript.fetchTranscript(videoId)
-  //       .then((res) => res.forEach((item) => set.add(item.text)))
-  //       .catch((err) => console.log(err));
-  //     transcript[videoId] = set;
-  //     console.log('use effec end');
-  //   }
-  //   console.log(transcript[videoId]);
-  //   if (transcript[videoId]) {
-  //     setLoading(false);
-  //   }
+  const getTranscript = useCallback(async () => {
+    YoutubeTranscript.fetchTranscript(videoId)
+      .then((res) =>
+        res.forEach((item) => setTranscript((prev) => [...prev, item.text]))
+      )
+      .catch((err) => console.log(err));
+  }, [videoId]);
+
+  const getSummary = useCallback(async () => {
+    // console.log(transcript.join(' '));
+    // const response = await fetch(
+    //   'https://api-inference.huggingface.co/models/Falconsai/text_summarization',
+    //   {
+    //     headers: {
+    //       Authorization: 'Bearer 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',
+    //     },
+    //     method: 'POST',
+    //     body: JSON.stringify(transcript.join(' ')),
+    //   }
+    // );
+    // const result = await response.json();
+    // console.log(result);
+    // setSummary(result[0].summary_text);
+    //return result;
+    const hf = new HfInference('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');
+    const summary = await hf.summarization({
+      model: 'facebook/bart-large-cnn',
+      inputs: transcript.join(' '),
+      parameters: {
+        max_length: 1000,
+        min_length: 200,
+      },
+    });
+    setSummary(summary.summary_text);
+  }, [transcript]);
+
+  useEffect(() => {
+    getTranscript();
+  }, [videoId]);
 
   return (
     <div className="wrapper">
-      <img
-        onClick={() => setShow(!show)}
-        className="image-container"
-        src="https://media.istockphoto.com/id/1010001882/vector/%C3%B0%C3%B0%C2%B5%C3%B1%C3%B0%C3%B1%C3%B1.jpg?s=612x612&w=0&k=20&c=1jeAr9KSx3sG7SKxUPR_j8WPSZq_NIKL0P-MA4F1xRw="
-        alt=""
-      />
+      <div className="content-container">
+        {transcript.length > 0 && (
+          <button onClick={getSummary}>Get Summary</button>
+        )}
+        <div className="summary">
+          <p>{summary}</p>
+        </div>
+      </div>
     </div>
   );
 };
