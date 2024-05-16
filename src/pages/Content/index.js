@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Content from './Content';
+import Tabbar from './Tab';
 
 (() => {
   var isClicked = false;
@@ -19,7 +20,7 @@ import Content from './Content';
     div.style.position = 'fixed';
     div.style.bottom = '0';
     div.style.right = '0';
-    div.style.zIndex = '999';
+    div.style.zIndex = '9999';
     div.style.width = '100px';
     div.style.height = '100px';
     div.style.border = '1px solid red';
@@ -35,17 +36,18 @@ import Content from './Content';
     parent.style.right = '0';
     parent.style.zIndex = '999';
 
-    body.appendChild(parent);
-
-    const root = createRoot(parent);
     div.addEventListener('click', () => {
       if (!isClicked) {
-        parent.style.display = 'block';
-        root.render(<Content videoId={videoId} />);
+        // parent.style.display = 'block';
+        body.appendChild(parent);
+        const root = createRoot(parent);
+        root.render(<Tabbar videoId={videoId} />);
         isClicked = true;
       } else {
-        parent.style.display = 'none';
+        parent.parentNode.removeChild(parent);
         isClicked = false;
+
+        // parent.style.display = 'none';
       }
     });
 

@@ -12,13 +12,15 @@
   border-radius: 50%;
 }
 
-.content-container {
+.tabs {
   height: calc(100vh - 200px);
   width: 400px;
-  background-color: red;
-  color: #000;
+  background: #f5f5f5;
+  padding: 20px 30px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  border-radius: 50px;
+  box-shadow: 2px 4px 2px #ccc;
+  margin-right: 20px;
 }
 
 .summary {
@@ -33,5 +35,154 @@
   margin: 0;
   padding: 0;
   font-size: medium;
+}
+
+body {
+  background: #ddd;
+  font-family: 'Ralway', sans-serif;
+}
+
+/* .tabs {
+  height: 100%;
+  width: 400px;
+  background: #f5f5f5;
+  padding: 20px 30px;
+  overflow: hidden;
+  border-radius: 50px;
+  box-shadow: 5px 10px 5px #ccc;
+} */
+
+.tabs .tab-header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.tabs .tab-header > div {
+  width: calc(100% / 2);
+  text-align: center;
+  clear: #888;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.tabs .tab-header > div.active {
+  color: #00acee;
+}
+
+.tabs .tab-indicator {
+  position: relative;
+  width: calc(100% / 2);
+  height: 5px;
+  background: #00acee;
+  border-radius: 5px;
+  left: 10px;
+}
+
+.tabs .tab-body {
+  height: calc(100% - 60px);
+  position: relative;
+  padding: 10px 5px;
+}
+
+.tabs .tab-body > div {
+  position: absolute;
+  top: -200%;
+  opacity: 0;
+  margin-top: 5px;
+  transform: scale(0.9);
+  transition: opacity 500ms ease-in-out 0ms, transform 500ms ease-in-out 0ms;
+}
+
+.tabs .tab-body > div.active {
+  top: 0;
+  opacity: 1;
+  transform: scale(1);
+  margin-top: 5px;
+}
+
+/* chatbot */
+
+.chatbot {
+  font-family: monospace;
+  text-align: center;
+  display: flex;
+  flex-flow: column;
+  width: 400px;
+  overflow: hidden;
+}
+
+.messages {
+  width: 100%;
+  height: calc(100% - 60px);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0px;
+}
+
+.message-container {
+  width: 100%;
+}
+
+.bot-message {
+  float: left;
+  padding: 15px 20px;
+  margin: 5px;
+  border-radius: 20px 20px 20px 1px;
+  background: #00aaa5;
   color: white;
+  min-width: 40px;
+}
+
+.user-message {
+  float: right;
+  padding: 15px 10px;
+  margin: 10px;
+  border-radius: 20px 20px 1px 20px;
+  background: #cccccc;
+  color: black;
+}
+
+.input {
+  position: relative;
+}
+
+.input > form > input[type='text'] {
+  font-family: monospace;
+  font-size: 16px;
+  border: 0;
+  border-radius: 0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-top: 1px solid #eee;
+  box-shadow: none;
+  box-sizing: border-box;
+  opacity: 1;
+  outline: none;
+  padding: 16px 52px 16px 10px;
+  width: 100%;
+  -webkit-appearance: none;
+}
+
+.input > form > input:focus {
+  outline: none;
+}
+
+.input > form > button {
+  background-color: transparent;
+  border: 0;
+  border-bottom-right-radius: 10px;
+  box-shadow: none;
+  cursor: pointer;
+  fill: #4a4a4a;
+  opacity: 1;
+  outline: none;
+  padding: 14px 16px 12px 16px;
+  position: absolute;
+  right: 0;
+  top: 0;
 }

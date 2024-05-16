@@ -5,34 +5,10 @@ import './content.styles.css';
 import { HfInference } from '@huggingface/inference';
 
 // var transcript = new Map();
-const Content = ({ videoId }) => {
-  const [transcript, setTranscript] = useState([]);
+const Content = ({ transcript }) => {
   const [summary, setSummary] = useState('');
 
-  const getTranscript = useCallback(async () => {
-    YoutubeTranscript.fetchTranscript(videoId)
-      .then((res) =>
-        res.forEach((item) => setTranscript((prev) => [...prev, item.text]))
-      )
-      .catch((err) => console.log(err));
-  }, [videoId]);
-
   const getSummary = useCallback(async () => {
-    // console.log(transcript.join(' '));
-    // const response = await fetch(
-    //   'https://api-inference.huggingface.co/models/Falconsai/text_summarization',
-    //   {
-    //     headers: {
-    //       Authorization: 'Bearer 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',
-    //     },
-    //     method: 'POST',
-    //     body: JSON.stringify(transcript.join(' ')),
-    //   }
-    // );
-    // const result = await response.json();
-    // console.log(result);
-    // setSummary(result[0].summary_text);
-    //return result;
     const hf = new HfInference('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');
     const summary = await hf.summarization({
       model: 'facebook/bart-large-cnn',
@@ -45,16 +21,20 @@ const Content = ({ videoId }) => {
     setSummary(summary.summary_text);
   }, [transcript]);
 
-  useEffect(() => {
-    getTranscript();
-  }, [videoId]);
+  console.log('summary', summary);
 
+  useEffect(() => {
+    getSummary();
+  }, [transcript]);
   return (
     <div className="wrapper">
       <div className="content-container">
-        {transcript.length > 0 && (
-          <button onClick={getSummary}>Get Summary</button>
-        )}
+        {/* {transcript.length > 0 && (
+          <div className="">
+            <button onClick={getSummary}>Get Summary</button>
+            <button onClick={getSummary}>Ask Questions</button>
+          </div>
+        )} */}
         <div className="summary">
           <p>{summary}</p>
         </div>
