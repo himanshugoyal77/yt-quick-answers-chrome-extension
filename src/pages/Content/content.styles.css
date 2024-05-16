@@ -102,6 +102,7 @@ body {
   opacity: 1;
   transform: scale(1);
   margin-top: 5px;
+  height: 100%;
 }
 
 /* chatbot */
@@ -148,7 +149,10 @@ body {
 }
 
 .input {
-  position: relative;
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 0;
 }
 
 .input > form > input[type='text'] {

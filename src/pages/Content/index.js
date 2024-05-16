@@ -4,7 +4,7 @@ import Content from './Content';
 import Tabbar from './Tab';
 
 (() => {
-  var isClicked = false;
+  let isClicked = false;
 
   let videUrl = window.location.href;
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -35,6 +35,8 @@ import Tabbar from './Tab';
     parent.style.bottom = '120px';
     parent.style.right = '0';
     parent.style.zIndex = '999';
+    parent.classList.add('greasy-extension');
+    console.log('clicked', isClicked);
 
     div.addEventListener('click', () => {
       if (!isClicked) {
@@ -44,8 +46,11 @@ import Tabbar from './Tab';
         root.render(<Tabbar videoId={videoId} />);
         isClicked = true;
       } else {
-        parent.parentNode.removeChild(parent);
-        isClicked = false;
+        const parent = document.querySelector('.greasy-extension');
+        if (parent) {
+          parent.remove();
+          isClicked = false;
+        }
 
         // parent.style.display = 'none';
       }

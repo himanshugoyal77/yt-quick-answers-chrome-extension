@@ -53,7 +53,7 @@ const Tabbar = ({ videoId }) => {
               <Content transcript={transcript} />
             </div>
             <div className={tabIdx === 1 ? 'active' : ''}>
-              <Bot transcript={transcript} />
+              <Bot transcript={transcript.join(' ')} videoId={videoId} />
             </div>
           </div>
         </div>
