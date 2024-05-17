@@ -1,3 +1,7 @@
+::-webkit-scrollbar {
+  width: 10px;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -113,7 +117,8 @@ body {
   display: flex;
   flex-flow: column;
   width: 400px;
-  overflow: hidden;
+  overflow-y: scroll;
+  height: calc(100vh - 270px);
 }
 
 .messages {
@@ -137,6 +142,9 @@ body {
   background: #00aaa5;
   color: white;
   min-width: 40px;
+  max-width: 260px;
+  text-align: start;
+  width: max-content;
 }
 
 .user-message {
@@ -189,4 +197,19 @@ body {
   position: absolute;
   right: 0;
   top: 0;
+}
+
+.spinner {
+  height: 100%;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-text {
+  margin-top: 5px;
+  text-align: center;
+  color: #00acee;
 }

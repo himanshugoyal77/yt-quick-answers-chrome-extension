@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './content.styles.css';
-
-const db = new Set();
+import { Bars } from 'react-loader-spinner';
 
 const Bot = ({ transcript, videoId }) => {
-  console.log('db', db);
   const inputRef = useRef();
   const el = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -14,34 +12,62 @@ const Bot = ({ transcript, videoId }) => {
     el.current.scrollIntoView({ block: 'end', behavior: 'smooth' });
   });
 
-  const handleSend = async (e) => {
-    e.preventDefault();
-    console.log(inputRef.current.value);
-    const newMsg = messages.concat(
-      <UserMsg key={messages.length + 1} text={inputRef.current.value} />
-    );
-    setMessages(newMsg);
-
+  const getApiResponse = async (query) => {
     const res = await fetch('http://localhost:4500/search', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query: inputRef.current.value, videoId }),
+      body: JSON.stringify({ query: query, videoId }),
     });
+
     const data = await res.json();
+
+    // id loading true, show ... in the bot message
     if (res.status === 200) {
-      const newMsg = messages.concat(
-        <div key={messages.length + 1} className="bot-message">
-          {data.message}
-        </div>
-      );
-      setMessages(newMsg);
-      inputRef.current.value = '';
+      return data.message;
     }
+
+    return 'Sorry, I am not able to understand your query';
   };
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+
+    const query = inputRef.current.value;
+
+    if (query === '') {
+      setMessages((prev) => [
+        ...prev,
+        <div key={Date.now()} className="bot-message">
+          Please enter a valid query
+        </div>,
+      ]);
+      return;
+    }
+
+    inputRef.current.value = '';
+
+    // setMessages((prev) => [
+    //   ...prev,
+    //   <div key={Date.now()} className="user-message">
+    //     {query}
+    //   </div>,
+    // ]);
+    const newMessages = messages.concat(
+      <UserMessage key={messages.length + 1} text={query} />,
+      <BotMessage
+        key={messages.length + 2}
+        fetchMessage={async () => await getApiResponse(query)}
+      />
+    );
+    setMessages(newMessages);
+  };
+
+  console.log('messsages', messages);
+
   const IndexTranscript = useCallback(async () => {
-    if (transcript.length > 0 && !db.has(videoId)) {
+    if (transcript.length > 0) {
       try {
         const res = await fetch('http://localhost:4500/generate-vectors', {
           method: 'POST',
@@ -51,15 +77,12 @@ const Bot = ({ transcript, videoId }) => {
           body: JSON.stringify({ transcript, videoId }),
         });
         const data = await res.json();
-        db.add(videoId);
         if (res.status === 200) {
-          console.log('data', data);
-          const newMsg = messages.concat(
+          setMessages([
             <div key={messages.length + 1} className="bot-message">
               {data.message}
-            </div>
-          );
-          setMessages(newMsg);
+            </div>,
+          ]);
         }
       } catch (error) {
         console.log('error', error);
@@ -105,10 +128,30 @@ const Bot = ({ transcript, videoId }) => {
   );
 };
 
-const UserMsg = ({ text }) => {
+const UserMessage = ({ text }) => {
   return (
     <div className="message-container">
       <div className="user-message">{text}</div>
+    </div>
+  );
+};
+
+const BotMessage = ({ fetchMessage }) => {
+  const [isLoading, setLoading] = useState(true);
+  const [message, setMessage] = useState('hi there');
+
+  useEffect(() => {
+    async function loadMessage() {
+      const msg = await fetchMessage();
+      setLoading(false);
+      setMessage(msg);
+    }
+    loadMessage();
+  }, [fetchMessage]);
+
+  return (
+    <div className="message-container">
+      <div className="bot-message">{isLoading ? '...' : message}</div>
     </div>
   );
 };
